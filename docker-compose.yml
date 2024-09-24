@@ -1,0 +1,31 @@
+﻿services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: "test"
+      POSTGRES_PASSWORD: "test"
+      POSTGRES_DB: testdb
+    restart: always
+    ports:
+      - "5432:5432"
+
+  clientregistry:
+    image: clientregistry
+#    restart: on-failure
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+#      - ASPNETCORE_HTTPS_PORTS=8081
+#      - ASPNETCORE_URLS="https://+;http://+"
+      - ASPNETCORE_URLS="http://+"      
+      - BUILD_CONFIGURATION=Debug
+      - IS_DOCKER=true
+#    ports:
+#      - "8080:8081"
+    build:
+      context: .
+      dockerfile: ClientRegistry/Dockerfile
+    depends_on:
+      - postgres
+    links:
+      - postgres
